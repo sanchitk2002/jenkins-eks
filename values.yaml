@@ -1,0 +1,6 @@
+controller:
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClassName: gp2
+

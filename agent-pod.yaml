@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+spec:
+  serviceAccountName: jenkins   # Uses the ServiceAccount we created
+  containers:
+    - name: terraform
+      image: hashicorp/terraform:1.6
+      command: ['cat']   # Keeps container alive for Jenkins commands
+      tty: true
+    - name: ansible
+      image: williamyeh/ansible:latest
+      command: ['cat']
+      tty: true
+
