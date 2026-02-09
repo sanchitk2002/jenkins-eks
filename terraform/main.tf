@@ -32,6 +32,7 @@ resource "aws_security_group" "web_sg" {
 resource "aws_instance" "web" {
   ami                    = var.ami
   instance_type          = var.instance_type
+  key_name               = "jenkins"
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
   tags = { Name = "jenkins-web-instance" }
