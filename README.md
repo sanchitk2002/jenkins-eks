@@ -100,6 +100,12 @@ Verify installation:
 kubectl get pods -n jenkins\
 kubectl get svc -n jenkins
 
+## 📸 Screenshot: Jenkins UI Pipeline Stages
+
+Place image here:
+
+![Jenkin-UI]([images/example.png](https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/jenkins-ui))
+
 ------------------------------------------------------------------------
 
 # 🚀 STEP 3: Generate SSH Key for EC2
@@ -152,7 +158,8 @@ When the pipeline runs:
 
 Place image here:
 
-screenshots/sg-ec2.png
+![Security Group]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/sg))
+![Security Group]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/instance))
 
 ------------------------------------------------------------------------
 
@@ -163,12 +170,6 @@ Then Ansible runs:
 
 -   Updates apt cache
 -   Installs nginx package
-
-## 📸 Screenshot: Terminal Output (Terraform + Ansible)
-
-Place image here:
-
-screenshots/terminal-output.png
 
 ------------------------------------------------------------------------
 
@@ -184,11 +185,7 @@ Pipeline Stages:
 1.  Terraform Apply
 2.  Run Ansible
 
-## 📸 Screenshot: Jenkins UI Pipeline Stages
-
-Place image here:
-
-screenshots/jenkins-stages.png
+![Terminal]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/terminal))
 
 ------------------------------------------------------------------------
 
@@ -199,6 +196,8 @@ Open in browser:
 http://`<EC2_PUBLIC_IP>`{=html}
 
 You should see the NGINX welcome page 🎉
+
+![NGINX]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/nginx))
 
 ------------------------------------------------------------------------
 
