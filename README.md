@@ -1,89 +1,255 @@
-# 🚀 Jenkins + Terraform + Ansible Deployment on AWS EKS
+# 🚀 Jenkins on EKS → Terraform → Ansible → NGINX
 
-This project demonstrates **CI/CD automation** using Jenkins, Terraform, and Ansible to deploy a **web server on AWS EC2** via Jenkins agents running on **EKS Kubernetes pods**.
+## End-to-End CI/CD Deployment on AWS (Step-by-Step Guide)
 
----
+This project demonstrates a complete real-world DevOps CI/CD pipeline
+where:
 
-## 🛠️ Tech Stack
+-   Jenkins runs on Amazon EKS
+-   Jenkins dynamically launches Kubernetes agent pods
+-   Terraform provisions an EC2 instance
+-   Ansible installs NGINX on the EC2 instance via SSH
+-   The NGINX application becomes publicly accessible
 
-- **Jenkins** – CI/CD automation
-- **Terraform** – Infrastructure as Code (IaC)
-- **Ansible** – Configuration Management
-- **AWS EC2** – Virtual server for web hosting
-- **AWS EKS** – Kubernetes cluster for Jenkins agents
-- **GitHub** – Source code repository
+This README is written as a **hands-on guided tutorial**, not just a
+command reference.
 
----
+------------------------------------------------------------------------
 
-## 📝 Project Overview
+# 🏗 Architecture Overview
 
-1. **Checkout code** from GitHub repository  
-2. **Terraform stage**:  
-   - Create EC2 instance and security group  
-   - Capture public IP  
-3. **Ansible stage**:  
-   - Configure the EC2 instance (install Nginx)  
-   - Use SSH key securely from Kubernetes secret  
+Developer triggers Jenkins Pipeline →\
+Jenkins (running on EKS) →\
+Terraform Pod provisions EC2 →\
+Ansible Pod configures EC2 →\
+NGINX is deployed and accessible
 
----
+------------------------------------------------------------------------
 
-## 🔑 Prerequisites
+# 📋 Prerequisites
 
-- AWS CLI configured with proper IAM permissions  
-- Kubernetes cluster with Jenkins deployed  
-- SSH key pair for EC2 access (private key stored locally and as a Kubernetes secret)  
-- GitHub repository containing:  
-  - `Jenkinsfile`  
-  - `terraform/` folder (`main.tf`, `outputs.tf`)  
-  - `ansible/nginx.yaml` playbook  
+## 1️⃣ AWS Requirements
 
----
+You must have:
 
-## 📂 File Structure
+-   AWS Account
+-   IAM User with permissions for:
+    -   EC2
+    -   EKS
+    -   VPC
+    -   IAM
 
-.
-├── Jenkinsfile
-├── terraform/
-│ ├── main.tf
-│ └── outputs.tf
-├── ansible/
-│ └── nginx.yaml
-└── README.md
+Verify credentials:
 
+aws sts get-caller-identity
 
----
+------------------------------------------------------------------------
 
-## ⚡ Step-by-Step Guide
+## 2️⃣ Install Required Tools (Local Machine)
 
-### 1️⃣ Create SSH Key Secret in Kubernetes
+Ensure these are installed:
 
-```bash
-# Ensure your private key is accessible
-ls ~/jenkins.pem
+aws --version\
+kubectl version --client\
+terraform -version\
+eksctl version\
+helm version
 
-# Create Kubernetes secret
-kubectl create secret generic jenkins-ssh-key \
-  --from-file=jenkins.pem=~/jenkins.pem \
-  -n jenkins
-```
-```bash
-# Copy SSH key to temporary path
-cp /etc/jenkins-ssh-key/jenkins.pem /tmp/jenkins.pem
-chmod 600 /tmp/jenkins.pem
+Then configure AWS:
 
-# Disable host key checking for Ansible
-export ANSIBLE_HOST_KEY_CHECKING=False
+aws configure
 
-# Run Ansible playbook
-ansible-playbook -i ansible/inventory ansible/nginx.yaml --private-key=/tmp/jenkins.pem -u ubuntu
-```
----
+------------------------------------------------------------------------
 
-## 💡 Tips & Best Practices
+# 🚀 STEP 1: Create EKS Cluster
 
-- **Use separate Terraform and Ansible containers** in Jenkins pods to keep concerns isolated.  
-- **Store SSH keys securely** using Kubernetes secrets; never commit private keys to Git.  
-- **Wait for SSH readiness** before running Ansible to avoid connection errors.  
-- **Disable host key checking in Ansible** in CI/CD pipelines for ephemeral instances:  
-  ```bash
-  export ANSIBLE_HOST_KEY_CHECKING=False
+We create a Kubernetes cluster where Jenkins will run.
+
+eksctl create cluster\
+--name jenkins-eks\
+--region ap-south-1\
+--nodegroup-name workers\
+--node-type t3.medium\
+--nodes 2
+
+Wait 10--15 minutes for cluster creation.
+
+Verify:
+
+kubectl get nodes
+
+You should see worker nodes in Ready state.
+
+------------------------------------------------------------------------
+
+# 🚀 STEP 2: Install Jenkins on EKS
+
+## Create Namespace
+
+kubectl create namespace jenkins
+
+## Install Jenkins Using Helm
+
+helm repo add jenkins https://charts.jenkins.io\
+helm repo update
+
+helm install jenkins jenkins/jenkins -n jenkins
+
+Verify installation:
+
+kubectl get pods -n jenkins\
+kubectl get svc -n jenkins
+
+------------------------------------------------------------------------
+
+# 🚀 STEP 3: Generate SSH Key for EC2
+
+Terraform will attach this key to EC2.\
+Ansible will use it for SSH.
+
+ssh-keygen -t rsa -b 4096 -f jenkins.pem\
+chmod 600 jenkins.pem
+
+------------------------------------------------------------------------
+
+# 🚀 STEP 4: Store SSH Key in Kubernetes Secret
+
+kubectl create secret generic jenkins-ssh-key\
+--from-file=jenkins.pem\
+-n jenkins
+
+Verify:
+
+kubectl get secret -n jenkins
+
+------------------------------------------------------------------------
+
+# 🚀 STEP 5: Configure AWS Credentials in Jenkins
+
+Go to:
+
+Jenkins → Manage Jenkins → Credentials → Global
+
+Add:
+
+Kind: Username with password\
+ID: aws-creds\
+Username: AWS_ACCESS_KEY_ID\
+Password: AWS_SECRET_ACCESS_KEY
+
+------------------------------------------------------------------------
+
+# 🚀 STEP 6: Terraform Provisions EC2
+
+When the pipeline runs:
+
+-   Terraform initializes
+-   Creates Security Group
+-   Creates EC2 instance
+-   Outputs Public IP
+
+## 📸 Screenshot: AWS Console (Security Group + EC2)
+
+Place image here:
+
+screenshots/sg-ec2.png
+
+------------------------------------------------------------------------
+
+# 🚀 STEP 7: Ansible Installs NGINX
+
+Pipeline waits for SSH (port 22).\
+Then Ansible runs:
+
+-   Updates apt cache
+-   Installs nginx package
+
+## 📸 Screenshot: Terminal Output (Terraform + Ansible)
+
+Place image here:
+
+screenshots/terminal-output.png
+
+------------------------------------------------------------------------
+
+# 🚀 STEP 8: Jenkins Pipeline Execution
+
+Jenkins dynamically creates:
+
+-   Terraform container
+-   Ansible container
+
+Pipeline Stages:
+
+1.  Terraform Apply
+2.  Run Ansible
+
+## 📸 Screenshot: Jenkins UI Pipeline Stages
+
+Place image here:
+
+screenshots/jenkins-stages.png
+
+------------------------------------------------------------------------
+
+# ✅ Final Verification
+
+Open in browser:
+
+http://`<EC2_PUBLIC_IP>`{=html}
+
+You should see the NGINX welcome page 🎉
+
+------------------------------------------------------------------------
+
+# 🔧 Troubleshooting
+
+❌ No valid credential sources found\
+→ Ensure AWS credentials are exported inside pipeline.
+
+❌ InvalidClientTokenId\
+→ Check IAM credentials.
+
+❌ SSH Timeout\
+→ Ensure EC2 is fully running and security group allows port 22.
+
+------------------------------------------------------------------------
+
+# 🧠 What You Learned
+
+-   Running Jenkins on Kubernetes (EKS)
+-   Dynamic Jenkins agent pods
+-   Infrastructure as Code using Terraform
+-   Configuration management using Ansible
+-   Secure secret handling in Kubernetes
+-   Real-world CI/CD debugging
+
+------------------------------------------------------------------------
+
+# 🚀 Future Improvements
+
+-   Use IRSA instead of AWS access keys
+-   Add Terraform destroy stage
+-   Add Ingress + ALB
+-   Add GitHub Webhooks
+-   Store Terraform state in S3 + DynamoDB
+
+------------------------------------------------------------------------
+
+# 📁 Recommended Repository Structure
+
+. ├── Jenkinsfile\
+├── terraform/\
+├── ansible/\
+└── screenshots/\
+├── sg-ec2.png\
+├── terminal-output.png\
+└── jenkins-stages.png
+
+------------------------------------------------------------------------
+
+# 📜 License
+
+For educational and demonstration purposes.
+
+Happy DevOps 🚀
