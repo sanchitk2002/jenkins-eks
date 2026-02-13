@@ -159,7 +159,7 @@ When the pipeline runs:
 Place image here:
 
 ![Security Group]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/sg.png))
-![Security Group]([screenshots/instance.png))
+![Security Group](screenshots/instance.png)
 
 ------------------------------------------------------------------------
 
