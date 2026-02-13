@@ -100,9 +100,7 @@ Verify installation:
 kubectl get pods -n jenkins\
 kubectl get svc -n jenkins
 
-## 📸 Screenshot: Jenkins UI Pipeline Stages
-
-Place image here:
+## 📸Jenkins UI Pipeline Stages
 
 ![Jenkin-UI](screenshots/jenkins-ui.png)
 
@@ -154,9 +152,7 @@ When the pipeline runs:
 -   Creates EC2 instance
 -   Outputs Public IP
 
-## 📸 Screenshot: AWS Console (Security Group + EC2)
-
-Place image here:
+## 📸AWS Console (Security Group + EC2)
 
 ![Security Group](/screenshots/sg.png)
 ![Instance](screenshots/instance.png)
@@ -197,7 +193,7 @@ http://`<EC2_PUBLIC_IP>`{=html}
 
 You should see the NGINX welcome page 🎉
 
-![NGINX](/screenshots/nginx.png)
+![NGINX](/screenshots/nginx-web.png)
 
 ------------------------------------------------------------------------
 
