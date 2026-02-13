@@ -104,7 +104,7 @@ kubectl get svc -n jenkins
 
 Place image here:
 
-![Jenkin-UI]([images/example.png](https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/jenkins-ui))
+![Jenkin-UI]([images/example.png](https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/jenkins-ui.png))
 
 ------------------------------------------------------------------------
 
@@ -158,8 +158,8 @@ When the pipeline runs:
 
 Place image here:
 
-![Security Group]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/sg))
-![Security Group]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/instance))
+![Security Group]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/sg.png))
+![Security Group]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/instance.png))
 
 ------------------------------------------------------------------------
 
@@ -185,7 +185,7 @@ Pipeline Stages:
 1.  Terraform Apply
 2.  Run Ansible
 
-![Terminal]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/terminal))
+![Terminal]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/terminal.png))
 
 ------------------------------------------------------------------------
 
@@ -197,7 +197,7 @@ http://`<EC2_PUBLIC_IP>`{=html}
 
 You should see the NGINX welcome page 🎉
 
-![NGINX]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/nginx))
+![NGINX]([https://github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/nginx.png))
 
 ------------------------------------------------------------------------
 
