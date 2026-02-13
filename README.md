@@ -104,7 +104,7 @@ kubectl get svc -n jenkins
 
 Place image here:
 
-![Jenkin-UI]([images/example.png](github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/jenkins-ui.png))
+![Jenkin-UI](github.com/sanchitk2002/jenkins-eks/blob/main/screenshots/jenkins-ui.png))
 
 ------------------------------------------------------------------------
 
